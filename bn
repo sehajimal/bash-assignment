@@ -1,0 +1,14 @@
+#!/bin/bash
+# bn script
+# Sehaj Ajimal, McMaster University, 2024
+
+###########################
+# Say hello to the user
+# Globals: None
+# Arguments: $1 = user name
+# Outputs: says hello on stdout
+# Returns: N.A.
+###########################
+hello() {
+echo "Hello, $1!"
+}
