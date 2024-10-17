@@ -53,18 +53,18 @@ rank() {
 
         if [ -z "$maleRanking" ]
         then
-            echo "$year: $babyname not found among male names"
+            echo "$year: $babyname not found among male names."
 
         else
-            echo "$year: $babyname ranked $maleRanking out of $totalMaleNames male names"
+            echo "$year: $babyname ranked $maleRanking out of $totalMaleNames male names."
         fi
 
         if [ -z "$femaleRanking" ]
         then
-            echo "$year: $babyname not found among female names"
+            echo "$year: $babyname not found among female names."
             
         else
-            echo "$year: $babyname ranked $femaleRanking out of $totalFemaleNames female names"
+            echo "$year: $babyname ranked $femaleRanking out of $totalFemaleNames female names."
         fi
 
     fi
@@ -76,10 +76,10 @@ rank() {
 
         if [ -z "$femaleRanking" ]
         then
-            echo "$year: $babyname not found among female names"
+            echo "$year: $babyname not found among female names."
             
         else
-            echo "$year: $babyname ranked $femaleRanking out of $totalFemaleNames female names"
+            echo "$year: $babyname ranked $femaleRanking out of $totalFemaleNames female names."
         fi
 
     fi
@@ -91,10 +91,10 @@ rank() {
 
         if [ -z "$maleRanking" ]
         then
-            echo "$year: $babyname not found among male names"
+            echo "$year: $babyname not found among male names."
 
         else
-            echo "$year: $babyname ranked $maleRanking out of $totalMaleNames male names"
+            echo "$year: $babyname ranked $maleRanking out of $totalMaleNames male names."
         fi
     fi
 }
