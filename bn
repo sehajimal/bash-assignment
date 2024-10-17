@@ -3,14 +3,6 @@
 # Sehaj Ajimal, McMaster University, 2024
 
 ###########################
-# Say hello to the user
-# Globals: None
-# Arguments: $1 = user name
-# Outputs: says hello on stdout
-# Returns: N.A.
-###########################
-
-###########################
 # Output usage string to stderr
 # Globals: None
 # Arguments: None
@@ -19,7 +11,6 @@
 usage() {
     echo "bn <year> <assigned gender f|F|m|M|b|B>" >&2 
 }
-
 
 ###########################
 # Outputs help text to stdout
@@ -36,6 +27,76 @@ help() {
     echo "  year         The year for the rankings (e.g., 2022)"
     echo "  gender       The gender to search (f/F = female, m/M = male, b/B = both)"
     exit 0
+}
+
+###########################
+# Say hello to the user
+# Globals: None
+# Arguments: $1 = user name
+# Outputs: says hello on stdout
+# Returns: N.A.
+###########################
+rank() {
+    local babyname="$1"
+    local year="$2"
+    local gender="$3"
+    
+    local fileName="us_baby_names/yob${year}.txt"
+
+    if [[ $gender =~ ^[bB]{1}$ ]]
+    then
+        femaleRanking=$(cat "$fileName" | grep -i -n "^${babyname},[F]," | grep -o '^[0-9]\+')
+        totalFemaleNames=$(cat "$fileName" | grep -n "\,[F]\," | tail -1 | grep -o '^[0-9]\+')
+
+        maleRanking=$(cat "$fileName" | grep -n "\,[M]\," | grep -P -i -n "\:${babyname},[M]," | grep -o '^[0-9]\+')
+        totalMaleNames=$(cat "$fileName" | grep -n "\,[M]\," | cat -n | tail -1 | grep -P -o '\b[0-9]+\b' | head -1)
+
+        if [ -z "$maleRanking" ]
+        then
+            echo "$year: $babyname not found among male names"
+
+        else
+            echo "$year: $babyname ranked $maleRanking out of $totalMaleNames male names"
+        fi
+
+        if [ -z "$femaleRanking" ]
+        then
+            echo "$year: $babyname not found among female names"
+            
+        else
+            echo "$year: $babyname ranked $femaleRanking out of $totalFemaleNames female names"
+        fi
+
+    fi
+
+    if [[ $gender =~ ^[fF]{1}$ ]] 
+    then
+        femaleRanking=$(cat "$fileName" | grep -i -n "^${babyname},[F]," | grep -o '^[0-9]\+')
+        totalFemaleNames=$(cat "$fileName" | grep -n "\,[F]\," | tail -1 | grep -o '^[0-9]\+')
+
+        if [ -z "$femaleRanking" ]
+        then
+            echo "$year: $babyname not found among female names"
+            
+        else
+            echo "$year: $babyname ranked $femaleRanking out of $totalFemaleNames female names"
+        fi
+
+    fi
+
+    if [[ $gender =~ ^[mM]{1}$ ]]
+    then
+        maleRanking=$(cat "$fileName" | grep -n "\,[M]\," | grep -P -i -n "\:${babyname},[M]," | grep -o '^[0-9]\+')
+        totalMaleNames=$(cat "$fileName" | grep -n "\,[M]\," | cat -n | tail -1 | grep -P -o '\b[0-9]+\b' | head -1)
+
+        if [ -z "$maleRanking" ]
+        then
+            echo "$year: $babyname not found among male names"
+
+        else
+            echo "$year: $babyname ranked $maleRanking out of $totalMaleNames male names"
+        fi
+    fi
 }
 
 if [[ $1 == "--help" ]]
@@ -72,9 +133,10 @@ do
         then
             echo "Badly formatted name: $item" >&2
             exit 3
+        else
+            rank $item $1 $2
         fi
     done
-
 done
 
 
