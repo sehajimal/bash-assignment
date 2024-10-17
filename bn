@@ -9,7 +9,7 @@
 # Returns: N.A.
 ###########################
 usage() {
-    echo "bn <year> <assigned gender: f|F|m|M|b|B>" >&2 
+    echo "bn <year> <assigned gender: f|F|m|M|b|B>">&2 
 }
 
 ###########################
@@ -20,43 +20,49 @@ usage() {
 # Returns: N.A.
 ###########################
 help() {
-    echo "Title: bn utility Version: v1.0.0"
+    echo ""
+    echo "Title: bn utility | Version: v1.0.0"
     echo "Usage: bn <year> <assigned gender f|F|m|M|b|B>"
+    echo ""
     echo "Displays baby name rankings by year and gender."
+    echo "User can determine the ranking of a baby name in a certain year and specific gender."
+    echo ""
     echo "Arguments:"
-    echo "  year         The year for the rankings (e.g., 2022)"
-    echo "  gender       The gender to search (f/F = female, m/M = male, b/B = both)"
+    echo "  year (first argument)        Must be 4 digits. The year for the rankings (e.g., 1969)"
+    echo "  gender (second argument)     The gender to search (f/F = female, m/M = male, b/B = both)"
+    echo ""
     exit 0
 }
 
 ###########################
-# Say hello to the user
+# Given a baby name, year, and gender, output the rank
 # Globals: None
-# Arguments: $1 = user name
-# Outputs: says hello on stdout
+# Arguments: $1 = baby name, $2 = year, $3 = gender
+# Outputs: According to question specification
 # Returns: N.A.
 ###########################
 rank() {
-    local babyname="$1"
+    local babyname="$1"                         #assigning the paramaters passed to variables
     local year="$2"
     local gender="$3"
     
-    local fileName="us_baby_names/yob${year}.txt"
+    local fileName="us_baby_names/yob${year}.txt"               #making it available in the rank function
 
+#checks if user inputted both genders
     if [[ $gender =~ ^[bB]{1}$ ]]
     then
-        femaleRanking=$(cat "$fileName" | grep -i -n "^${babyname},[F]," | grep -o '^[0-9]\+')
-        totalFemaleNames=$(cat "$fileName" | grep -n "\,[F]\," | tail -1 | grep -o '^[0-9]\+')
+        femaleRanking=$(cat "$fileName" | grep -i -n "^${babyname},[F]," | grep -o '^[0-9]\+')                  #femaleRanking is the rank of the baby name in a certain year
+        totalFemaleNames=$(cat "$fileName" | grep -n "\,[F]\," | tail -1 | grep -o '^[0-9]\+')                  #totalFemaleNames is the total female names in the specified year
 
-        maleRanking=$(cat "$fileName" | grep -n "\,[M]\," | grep -P -i -n "\:${babyname},[M]," | grep -o '^[0-9]\+')
+        maleRanking=$(cat "$fileName" | grep -n "\,[M]\," | grep -P -i -n "\:${babyname},[M]," | grep -o '^[0-9]\+')         
         totalMaleNames=$(cat "$fileName" | grep -n "\,[M]\," | cat -n | tail -1 | grep -P -o '\b[0-9]+\b' | head -1)
 
-        if [ -z "$maleRanking" ]
+        if [ -z "$maleRanking" ]                                    #if the rankings do not have a value that means the baby name is not found
         then
             echo "$year: $babyname not found among male names."
 
         else
-            echo "$year: $babyname ranked $maleRanking out of $totalMaleNames male names."
+            echo "$year: $babyname ranked $maleRanking out of $totalMaleNames male names."          #if the rankings have a value then output accordingly
         fi
 
         if [ -z "$femaleRanking" ]
@@ -69,6 +75,7 @@ rank() {
 
     fi
 
+#checks if user inputted for female gender
     if [[ $gender =~ ^[fF]{1}$ ]] 
     then
         femaleRanking=$(cat "$fileName" | grep -i -n "^${babyname},[F]," | grep -o '^[0-9]\+')
@@ -84,6 +91,7 @@ rank() {
 
     fi
 
+#checks if user inputted for male gender
     if [[ $gender =~ ^[mM]{1}$ ]]
     then
         maleRanking=$(cat "$fileName" | grep -n "\,[M]\," | grep -P -i -n "\:${babyname},[M]," | grep -o '^[0-9]\+')
@@ -99,48 +107,55 @@ rank() {
     fi
 }
 
-#
-if [[ $1 == "--help" ]]
+#############
+# Main script
+#############
+if [[ $1 == "--help" ]]         #note: $1 refers to first argument, $2 refers to second argument in Main script
 then
-    help
+    help                        
 fi
 
+#checks if 2 arguments are passed and going through the error cases
 if [[ $# != 2 ]]
 then
-    usage
+    usage                       
     exit 1
 
+#if given 2 arguments, checks if they are formatted correctly
 else
-    if ! [[ $2 =~ ^[fmbFMB]{1}$ ]]
+    if ! [[ $2 =~ ^[fmbFMB]{1}$ ]]                          #checking gender arg
     then
         echo "Badly formatted assigned gender: $2">&2
         usage
         exit 2
     fi
 
-    fileName="us_baby_names/yob${1}.txt"
-    if [ ! -f "$fileName" ]
+    if ! [[ "$1" =~ ^[0-9]{4}$ ]]                           #checking year arg
+    then
+        echo "Badly formatted assigned year: $1">&2
+        usage
+        exit 2
+    fi
+
+    fileName="us_baby_names/yob${1}.txt"                   #fileName variable stores the path to the file which the user wants to see, according to the year ($1) argument.         
+    if [ ! -f "$fileName" ]                                #checking if that year file exists.
     then
         echo "No data for $1" >&2
         exit 4
     fi
 fi
 
+#iterating through the user input
 while read line
 do
-    for item in $line
+    for item in $line                                   #"item" represents each baby name
     do
-        if [[ ! $item =~ ^[a-zA-Z]+$ ]]
+        if [[ ! $item =~ ^[a-zA-Z]+$ ]]                 #checks name formatting
         then
             echo "Badly formatted name: $item" >&2
             exit 3
         else
-            rank $item $1 $2
+            rank $item $1 $2                         #if baby name is formatted correctly, call rank function with three paramaters.(Passing the baby name, year, and gender respectivley.)
         fi
     done
 done
-
-
-
-
-
