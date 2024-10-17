@@ -9,14 +9,14 @@
 # Returns: N.A.
 ###########################
 usage() {
-    echo "bn <year> <assigned gender f|F|m|M|b|B>" >&2 
+    echo "bn <year> <assigned gender: f|F|m|M|b|B>" >&2 
 }
 
 ###########################
 # Outputs help text to stdout
 # Globals: None
-# Arguments: $1 = user name
-# Outputs: says hello on stdout
+# Arguments: none
+# Outputs: Linux style --help command
 # Returns: N.A.
 ###########################
 help() {
@@ -99,6 +99,7 @@ rank() {
     fi
 }
 
+#
 if [[ $1 == "--help" ]]
 then
     help
