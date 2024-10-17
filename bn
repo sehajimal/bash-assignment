@@ -9,6 +9,75 @@
 # Outputs: says hello on stdout
 # Returns: N.A.
 ###########################
-hello() {
-echo "Hello, $1!"
+
+###########################
+# Output usage string to stderr
+# Globals: None
+# Arguments: None
+# Returns: N.A.
+###########################
+usage() {
+    echo "bn <year> <assigned gender f|F|m|M|b|B>" >&2 
 }
+
+
+###########################
+# Outputs help text to stdout
+# Globals: None
+# Arguments: $1 = user name
+# Outputs: says hello on stdout
+# Returns: N.A.
+###########################
+help() {
+    echo "Title: bn utility Version: v1.0.0"
+    echo "Usage: bn <year> <assigned gender f|F|m|M|b|B>"
+    echo "Displays baby name rankings by year and gender."
+    echo "Arguments:"
+    echo "  year         The year for the rankings (e.g., 2022)"
+    echo "  gender       The gender to search (f/F = female, m/M = male, b/B = both)"
+    exit 0
+}
+
+if [[ $1 == "--help" ]]
+then
+    help
+fi
+
+if [[ $# != 2 ]]
+then
+    usage
+    exit 1
+
+else
+    if ! [[ $2 =~ ^[fmbFMB]{1}$ ]]
+    then
+        echo "Badly formatted assigned gender: $2">&2
+        usage
+        exit 2
+    fi
+
+    fileName="us_baby_names/yob${1}.txt"
+    if [ ! -f "$fileName" ]
+    then
+        echo "No data for $1" >&2
+        exit 4
+    fi
+fi
+
+while read line
+do
+    for item in $line
+    do
+        if [[ ! $item =~ ^[a-zA-Z]+$ ]]
+        then
+            echo "Badly formatted name: $item" >&2
+            exit 3
+        fi
+    done
+
+done
+
+
+
+
+
